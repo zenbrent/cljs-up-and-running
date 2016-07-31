@@ -1,6 +1,6 @@
 (ns modules.something
   ; (:require-macros [... as ...]) ; macros are loaded differently in cljs files.
-  )
+  (:require [cljs.reader :as reader]))
 
 (enable-console-print!)
 
@@ -30,5 +30,14 @@
      (println "Evaluating:" '~expr) ; quote unquote: so you can print the literal code of expr w/o evaluating it.
      (println "Result:" result#)
      result#))
+
+(println (:a (reader/read-string "{:a 1 :b 2}")))
+(println (pr-str {:a "1" :b "2"})) ; pr, prn, pr-str all print string escapes special characters
+
+; Tagged literals
+(println (.toDateString #inst "2016-07-31T10:16:03.253Z"))
+; the implementation can be different, but is a literal representation of a date thing.
+; DATES ARE JUST FUCKING SERIALIZED CORRECTLY OMG
+
 
 
