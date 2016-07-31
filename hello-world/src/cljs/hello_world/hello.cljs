@@ -140,3 +140,33 @@
 (reset! my-atom 1)
 (println "swapped" @my-atom)
 
+; Sequences: clj abstracts away from the list, so you can lisp using things other than singly-linked lists!
+(let [a-list [1 2 3 4]
+      a-map {:a 1 :b 2 :c 3}
+      car first
+      cdr rest]
+  (do
+  (println (car a-list) (cdr a-list))
+  (println (first a-map) (rest a-map))))
+; seq gets the sequence implementation of a type. first and rest call seq for you.
+
+;; wrapped in a do to prevent the cljs repl from printing the value back at the repl,
+;; which it does by default.
+;(do (def i (iterate inc 0)) nil)
+
+; iterate creates a lazy sequence from a fn and an initial value.
+(println
+  (take 20 (iterate inc 0)))
+; make sure to not keep a reference to an infinite sequence -- it will be cached.
+
+; Sequence API:
+; (map fn seq) ; it's lazy, can be used on infinite seqs
+; (map fn seq1 seq2) ; can take more than 1 seq, fn has to have that many arguments. It stops at the end of the shortest seq.
+; (reduce fn seq) ; not lazy, it produces a value from the entire sequence. fn must take 2 arguments.
+; (reduce fn initial-value seq)
+
+; (filter fn seq) ; lazy, but consuming a single item may iterate until it finds one that passes fn.
+
+; Other seq fns:
+; cons count nth take drop concat reverse lazy-seq
+
