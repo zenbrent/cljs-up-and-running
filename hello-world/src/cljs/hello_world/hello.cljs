@@ -53,13 +53,6 @@
     (< x 100) (do (println "x is a medium number.") :medium) 
     (< x 1000) (do (println "x is a large number.") :large))))
 
-; 4 basic data types:
-; vectors, maps, sets - evaluate to themselves
-; (1 2 3), (print "Hello")  ; Lists
-; [:a :b :c 1 2 3] ; Vector
-; {:a 1, "b" 2} ; Map
-; #{3 7 :z} ; Set
-
 ; The js namespace is the global js scope.
 ; Method access is (.methodName obj)
 ; Field access is (.-field obj)
@@ -89,3 +82,61 @@
 
 (println :a (:a  {:a 1 :b 2}))
 (println \a\ \s\e \r \i \e \s \ \o \f \  \c \h \a \r \a \c \t \e \r)
+
+; 4 basic data types:
+; vectors, maps, sets - evaluate to themselves
+; (1 2 3), (print "Hello")  ; Lists: ordered singly-linked lists.
+; [:a :b :c 1 2 3] ; Vector: usually prefererred over lists. O(log32(n)) lookup time.
+; {:a 1, "b" 2} ; Map: associative collection, like dictionary or hash.
+; #{3 7 :z} ; Set: unordered collection of unique items.
+
+; Equality in clj is always based on values!
+; Collections with the same semantics containing the same values are always equal.
+; The string result of a collection, when read back by the cljs reader, will always equal the original.
+; Values serialized by clj and cljs can be read by both.
+
+(println
+  '(this is a list)
+  (quote this is too)
+  (= '(:a :b :c) (conj '(:b :c) :a)))
+
+(println
+  ['this 'is 'a 'vector]
+  (= [:a :b :c] (conj [:a :b] :c)) ; n.b. this appends rather than prepends
+  )
+
+(let [a-list [1 2 3 4 5]]
+  (println (a-list 1)
+           (nth a-list 1)
+           (get a-list 1)
+           (assoc a-list 1 "2 is now this string")
+           (assoc a-list 2 "but a-list wasn't mutated <3")))
+
+(let [a-map {:a 1, :b 2 :c 3} ; commas are whitespace, but nice. 
+      another-map {1 2, "str" "val"}] ; keys can be any type that supports proper equality.
+  (println (:a a-map)
+           (a-map :a)
+           (assoc a-map :a "a value", :c "another val")
+           (another-map "str")
+           (get a-map :c)))
+
+(let [a-set #{:a :b :c}] ; check out clojure.set for more operations, like union, intersection, & difference.
+  (println (conj a-set :d)
+           (disj a-set :b)
+           (contains? a-set :c)
+           (contains? a-set :d)))
+
+; Atoms: identities that refer to a single value.
+; clj has several identities with different semantics, incl atoms, refs, and agents.
+; cljs only has atoms, the others are more relevant for concurrent operations.
+(def my-atom (atom {}))
+(println
+  my-atom
+  'the-value (deref my-atom)
+  'or @my-atom)
+; swap! reset!
+(swap! my-atom assoc :a "1")
+(println "swapped" @my-atom)
+(reset! my-atom 1)
+(println "swapped" @my-atom)
+
